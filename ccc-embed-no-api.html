@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CCC Messages Embed (No API)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Proxima Nova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .embed-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      background-color: black;
+    }
+    .embed-wrapper iframe,
+    .embed-wrapper img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #watch-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      color: #111;
+      font-family: 'Proxima Nova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      border: none;
+      padding: 16px 28px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="embed-wrapper" id="video-wrapper">
+    <img 
+      src="https://img.youtube.com/vi/Bvln0vg2tpo/maxresdefault.jpg" 
+      alt="This Week's Message Thumbnail" 
+      id="thumbnail" 
+    />
+    <button id="watch-button">Watch This Week's Message</button>
+  </div>
+
+  <script>
+    document.getElementById("watch-button").addEventListener("click", function () {
+      const wrapper = document.getElementById("video-wrapper");
+      wrapper.innerHTML = '<iframe src="https://www.youtube.com/embed/videoseries?list=PLzdVE7HNsqM97VKw3yc-iO-ThZCh_FP6N&autoplay=1&modestbranding=1&rel=0&vq=hd1080" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+    });
+  </script>
+</body>
+</html>
