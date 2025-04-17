@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCC Messages Embed</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Proxima Nova', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    .embed-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      background-color: #000;
+    }
+    .embed-wrapper iframe,
+    .embed-wrapper img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    #watch-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.95);
+      color: #111;
+      border: none;
+      padding: 16px 28px;
+      font-size: 18px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- LIVESTREAM CONTAINER -->
+  <div id="live-video" class="embed-wrapper" style="display: none;">
+    <iframe 
+      id="live-iframe"
+      src=""
+      frameborder="0" 
+      allow="autoplay; encrypted-media; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <!-- FALLBACK THUMBNAIL + BUTTON -->
+  <div id="thumbnail-container" class="embed-wrapper" style="display: none;">
+    <img id="yt-thumbnail" src="" alt="This Week's Message">
+    <button id="watch-button">Watch This Week's Message</button>
+  </div>
+
+  <!-- PLAYLIST CONTAINER -->
+  <div id="playlist-video" class="embed-wrapper" style="display: none;">
+    <iframe 
+      id="playlist-iframe"
+      src=""
+      frameborder="0" 
+      allow="autoplay; encrypted-media; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <script>
+    const apiKey = "AIzaSyAs7uoBEE403SMxtww6vfVKs0rUU182xlU";
+    const channelId = "UCUjg6kDCR41XkY0Y7p-p7Zg";
+    const playlistId = "PLzdVE7HNsqM97VKw3yc-iO-ThZCh_FP6N";
+
+    const liveContainer = document.getElementById("live-video");
+    const liveIframe = document.getElementById("live-iframe");
+    const thumbnailContainer = document.getElementById("thumbnail-container");
+    const thumbnailImg = document.getElementById("yt-thumbnail");
+    const playlistContainer = document.getElementById("playlist-video");
+    const playlistIframe = document.getElementById("playlist-iframe");
+    const watchButton = document.getElementById("watch-button");
+
+    fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&eventType=live&type=video&key=${apiKey}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.items && data.items.length > 0) {
+          // Channel is live
+          liveIframe.src = `https://www.youtube.com/embed/live_stream?channel=${channelId}&autoplay=1&modestbranding=1&rel=0&vq=hd1080`;
+          liveContainer.style.display = "block";
+        } else {
+          // Not live, show thumbnail with button
+          fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=1&key=${apiKey}`)
+            .then(res => res.json())
+            .then(data => {
+              const thumbnails = data.items[0].snippet.thumbnails;
+              const thumbUrl =
+                thumbnails.maxres?.url ||
+                thumbnails.standard?.url ||
+                thumbnails.high?.url ||
+                thumbnails.medium?.url ||
+                thumbnails.default?.url;
+              thumbnailImg.src = thumbUrl;
+              thumbnailContainer.style.display = "block";
+            });
+        }
+      })
+      .catch(err => {
+        console.error("YouTube API error:", err);
+      });
+
+    watchButton.addEventListener("click", () => {
+      thumbnailContainer.style.display = "none";
+      playlistContainer.style.display = "block";
+      playlistIframe.src = `https://www.youtube.com/embed/videoseries?list=${playlistId}&autoplay=1&modestbranding=1&rel=0&vq=hd1080`;
+    });
+  </script>
+</body>
+</html>
